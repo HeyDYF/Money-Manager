@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowRightLeft, RefreshCw, TrendingUp, TrendingDown } from "lucide-react"
-import { currencyOptions, getCurrencyDisplay } from "../utils/currencies"
+import { currencyOptions, getCurrencyDisplay } from "@/utils/currencies"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface ExchangeRateData {
@@ -23,7 +23,7 @@ interface ApiResponse {
   conversion_rates: Record<string, number>
 }
 
-export function ExchangeRate() {
+export function ExchangeCard() {
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
   const [amount, setAmount] = useState("1")
@@ -51,12 +51,14 @@ export function ExchangeRate() {
       const toRate = toCurrency === "USD" ? 1 : rates[toCurrency]
       const rate = toRate / fromRate
 
+      const now = new Date().toISOString()
+
       const mockData: ExchangeRateData = {
         fromCurrency,
         toCurrency,
         rate,
-        lastUpdated: data.time_last_update_utc,
-        change24h: (Math.random() - 0.5) * 2 // 由于API不提供24小时变化数据，暂时使用随机值
+        lastUpdated: now,
+        change24h: (Math.random() - 0.5) * 2 
       }
       setExchangeData(mockData)
       setConvertedAmount((Number(amount) * mockData.rate).toFixed(2))
@@ -79,9 +81,11 @@ export function ExchangeRate() {
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setAmount(value)
-    if (exchangeData) {
-      setConvertedAmount((Number(value) * exchangeData.rate).toFixed(2))
+    if (/^\d*\.?\d*$/.test(value)) { 
+      setAmount(value)
+      if (exchangeData) {
+        setConvertedAmount((Number(value) * exchangeData.rate).toFixed(2))
+      }
     }
   }
 
@@ -90,9 +94,7 @@ export function ExchangeRate() {
       <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl">
-              Currency Exchange
-            </CardTitle>
+            <CardTitle className="text-2xl">Currency Exchange</CardTitle>
             <CardDescription className="text-white/80">
               Real-time exchange rates
             </CardDescription>
@@ -100,7 +102,7 @@ export function ExchangeRate() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/10"
+            className="text-white  hover:text-white hover:bg-white/20"
             onClick={fetchExchangeRate}
             disabled={isLoading}
           >
@@ -108,28 +110,22 @@ export function ExchangeRate() {
           </Button>
         </div>
       </CardHeader>
+
       <CardContent className="p-6 space-y-6">
+        {/* 兑换区域 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* From */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              From
-            </label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From</label>
             <div className="flex space-x-2">
               <Select value={fromCurrency} onValueChange={setFromCurrency}>
                 <SelectTrigger className="w-[120px] rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                  <SelectValue>
-                    {getCurrencyDisplay(fromCurrency)}
-                  </SelectValue>
+                  <SelectValue>{getCurrencyDisplay(fromCurrency)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px]">
-                  {currencyOptions.map((option) => (
-                    <SelectItem 
-                      key={option.value} 
-                      value={option.value}
-                      className="flex items-center space-x-2"
-                    >
-                      <span className="font-medium">{getCurrencyDisplay(option.value)}</span>
-                      <span className="text-gray-500 dark:text-gray-400 ml-2">({option.name})</span>
+                  {currencyOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {getCurrencyDisplay(option.value)} ({option.name})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -146,26 +142,18 @@ export function ExchangeRate() {
             </div>
           </div>
 
+          {/* To */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              To
-            </label>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To</label>
             <div className="flex space-x-2">
               <Select value={toCurrency} onValueChange={setToCurrency}>
                 <SelectTrigger className="w-[120px] rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-                  <SelectValue>
-                    {getCurrencyDisplay(toCurrency)}
-                  </SelectValue>
+                  <SelectValue>{getCurrencyDisplay(toCurrency)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px]">
-                  {currencyOptions.map((option) => (
-                    <SelectItem 
-                      key={option.value} 
-                      value={option.value}
-                      className="flex items-center space-x-2"
-                    >
-                      <span className="font-medium">{getCurrencyDisplay(option.value)}</span>
-                      <span className="text-gray-500 dark:text-gray-400 ml-2">({option.name})</span>
+                  {currencyOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {getCurrencyDisplay(option.value)} ({option.name})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -180,6 +168,7 @@ export function ExchangeRate() {
           </div>
         </div>
 
+        {/* 交换按钮 */}
         <Button
           variant="outline"
           className="w-full rounded-xl border-gray-200 dark:border-gray-700"
@@ -189,6 +178,7 @@ export function ExchangeRate() {
           Swap Currencies
         </Button>
 
+        {/* 汇率详情展示 */}
         <AnimatePresence>
           {exchangeData && (
             <motion.div
@@ -198,17 +188,13 @@ export function ExchangeRate() {
               className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-2"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Exchange Rate
-                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Exchange Rate</span>
                 <span className="font-medium">
                   1 {fromCurrency} = {exchangeData.rate.toFixed(4)} {toCurrency}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  24h Change
-                </span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">24h Change</span>
                 <span className={`flex items-center font-medium ${
                   exchangeData.change24h >= 0 ? "text-green-500" : "text-red-500"
                 }`}>

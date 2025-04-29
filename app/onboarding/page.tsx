@@ -1,28 +1,43 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { motion } from "framer-motion"
-import { currencyOptions, getCurrencyDisplay } from "../utils/currencies"
+import { currencyOptions, getCurrencyDisplay } from "@/utils/currencies"
 import { Wallet, ArrowRight } from "lucide-react"
 
-interface OnboardingProps {
-  onComplete: (name: string, initialBalance: number, selectedCurrency: string) => void
-}
-
-export function Onboarding({ onComplete }: OnboardingProps) {
+export default function OnboardingPage() {
+  const router = useRouter()
+  const [isOnboardingComplete, setIsOnboardingComplete] = useState(false)
   const [name, setName] = useState("")
   const [initialBalance, setInitialBalance] = useState("")
   const [selectedCurrency, setSelectedCurrency] = useState("USD")
 
+  useEffect(() => {
+    const onboardingCompleted = localStorage.getItem("onboardingCompleted")
+    if (onboardingCompleted) {
+      router.replace("/home")
+    }
+  }, [router])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (name && initialBalance && selectedCurrency) {
-      onComplete(name, Number(initialBalance), selectedCurrency)
+      localStorage.setItem("onboardingCompleted", "true")
+      localStorage.setItem("userName", name)
+      localStorage.setItem("initialBalance", initialBalance.toString())
+      localStorage.setItem("currency", selectedCurrency)
+      setIsOnboardingComplete(true)
+      router.push("/home")
     }
+  }
+
+  if (isOnboardingComplete) {
+    return null
   }
 
   return (

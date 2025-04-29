@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus } from "lucide-react"
-import { currencySymbols, currencyOptions } from "../utils/currencies"
+import { currencySymbols, currencyOptions } from "@/utils/currencies"
 import { motion } from "framer-motion"
 
 interface BalanceDisplayProps {
@@ -18,8 +18,7 @@ interface BalanceDisplayProps {
     amount: number
     type: "increase" | "decrease"
   }
-  savingsGoal?: number | null
-  budget?: { amount: number; period: string } | null
+  
 }
 
 export default function BalanceDisplay({
@@ -27,9 +26,8 @@ export default function BalanceDisplay({
   currency,
   onUpdateBalance,
   onAddTransaction,
-  recentChange,
-  savingsGoal = null,
-  budget = null,
+  recentChange
+
 }: BalanceDisplayProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newBalance, setNewBalance] = useState(balance.toString())
@@ -97,9 +95,15 @@ export default function BalanceDisplay({
       </motion.div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="rounded-3xl">
+        <DialogContent className="w-[90%] rounded-3xl">
           <DialogHeader>
             <DialogTitle>Update Balance</DialogTitle>
+            <DialogHeader>
+              <DialogDescription>
+                Modify your account balance and currency
+              </DialogDescription>
+            </DialogHeader>
+
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
@@ -107,8 +111,9 @@ export default function BalanceDisplay({
               value={newBalance}
               onChange={(e) => setNewBalance(e.target.value)}
               placeholder="Enter new balance"
-              className="rounded-xl ios-input"
+              className="rounded-xl ios-input "
               required
+
             />
             <Select value={newCurrency} onValueChange={setNewCurrency}>
               <SelectTrigger className="rounded-xl ios-input">
@@ -122,7 +127,7 @@ export default function BalanceDisplay({
                 ))}
               </SelectContent>
             </Select>
-            <Button type="submit" className="w-full rounded-full ios-button">
+            <Button type="submit" className="w-full rounded-full ios-button bg-purple-500 hover:bg-purple-600">
               Update
             </Button>
           </form>

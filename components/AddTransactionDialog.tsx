@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import type { Transaction, TransactionCategory } from "../utils/transaction"
+import type { Transaction, TransactionCategory } from "@/utils/transaction"
 import { ShoppingBag, Utensils, Bus, Film, MoreHorizontal } from "lucide-react"
 
 const categories = [
@@ -55,8 +55,8 @@ export default function AddTransactionDialog({ isOpen, onClose, onAddTransaction
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+    <Dialog  open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-[90%] rounded-2xl" >
         <DialogHeader>
           <DialogTitle>Add New Transaction</DialogTitle>
           <DialogDescription>
@@ -95,7 +95,7 @@ export default function AddTransactionDialog({ isOpen, onClose, onAddTransaction
                 {categories.map(({ value, label, icon: Icon }) => (
                   <SelectItem key={value} value={value}>
                     <div className="flex items-center">
-                      <Icon className="mr-2 h-4 w-4" />
+                      <Icon className="mr-2 h-4 w-4 " />
                       {label}
                     </div>
                   </SelectItem>
@@ -109,7 +109,7 @@ export default function AddTransactionDialog({ isOpen, onClose, onAddTransaction
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-purple-500 hover:bg-purple-600">
             Add Transaction
           </Button>
         </form>

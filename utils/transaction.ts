@@ -1,4 +1,4 @@
-export type TransactionCategory = "Shopping" | "Restaurants" | "Transport" | "Entertainment"
+export type TransactionCategory = "Shopping" | "Restaurants" | "Transport" | "Entertainment" | "Other"
 
 export interface Transaction {
   id: string
@@ -7,5 +7,5 @@ export interface Transaction {
   type: "income" | "expense"
   date: string
   description?: string
-  category: TransactionCategory
+  category?: TransactionCategory
 }

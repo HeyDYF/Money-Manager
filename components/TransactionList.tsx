@@ -2,14 +2,22 @@
 
 import { useState } from "react"
 import type { Transaction } from "../hooks/useTransactions"
-import { ArrowDownIcon, ArrowUpIcon, PencilIcon, TrashIcon } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { ArrowDownIcon, ArrowUpIcon, PencilIcon, TrashIcon, ShoppingBag, Utensils, Bus, Film, MoreHorizontal } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { motion, AnimatePresence } from "framer-motion"
-import { currencySymbols } from "../utils/currencies"
+import { currencySymbols } from "@/utils/currencies"
+
+const categories = [
+  { value: "Shopping", label: "Shopping", icon: ShoppingBag },
+  { value: "Restaurants", label: "Restaurants", icon: Utensils },
+  { value: "Transport", label: "Transport", icon: Bus },
+  { value: "Entertainment", label: "Entertainment", icon: Film },
+  { value: "Other", label: "Other", icon: MoreHorizontal },
+] as const
 
 type TransactionCategory = string
 
@@ -17,7 +25,6 @@ interface TransactionListProps {
   transactions: Transaction[]
   onUpdateTransaction: (updatedTransaction: Transaction) => void
   onDeleteTransaction: (id: string) => void
-  categories: { value: TransactionCategory; label: string; icon: any }[]
   currency: string
 }
 
@@ -25,7 +32,6 @@ export default function TransactionList({
   transactions,
   onUpdateTransaction,
   onDeleteTransaction,
-  categories,
   currency,
 }: TransactionListProps) {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
@@ -127,9 +133,12 @@ export default function TransactionList({
       )}
 
       <Dialog open={!!editingTransaction} onOpenChange={() => setEditingTransaction(null)}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="rounded-2xl w-[90%]">
           <DialogHeader>
             <DialogTitle>Edit Transaction</DialogTitle>
+            <DialogDescription>
+              Edit the details of the transaction to update it.
+            </DialogDescription>
           </DialogHeader>
           {editingTransaction && (
             <form onSubmit={handleEditSubmit} className="space-y-4">
@@ -160,20 +169,6 @@ export default function TransactionList({
                   <SelectItem value="expense">Expense</SelectItem>
                 </SelectContent>
               </Select>
-              <Input
-                type="date"
-                value={editingTransaction.date.split("T")[0]}
-                onChange={(e) =>
-                  setEditingTransaction({ ...editingTransaction, date: new Date(e.target.value).toISOString() })
-                }
-                className="rounded-xl"
-              />
-              <Textarea
-                value={editingTransaction.description || ""}
-                onChange={(e) => setEditingTransaction({ ...editingTransaction, description: e.target.value })}
-                placeholder="Description (optional)"
-                className="rounded-xl"
-              />
               {editingTransaction.type === "expense" && (
                 <Select
                   value={editingTransaction.category}
@@ -196,7 +191,21 @@ export default function TransactionList({
                   </SelectContent>
                 </Select>
               )}
-              <Button type="submit" className="w-full rounded-xl">
+              <Input
+                type="date"
+                value={editingTransaction.date.split("T")[0]}
+                onChange={(e) =>
+                  setEditingTransaction({ ...editingTransaction, date: new Date(e.target.value).toISOString() })
+                }
+                className="rounded-xl"
+              />
+              <Textarea
+                value={editingTransaction.description || ""}
+                onChange={(e) => setEditingTransaction({ ...editingTransaction, description: e.target.value })}
+                placeholder="Description (optional)"
+                className="rounded-xl"
+              />
+              <Button type="submit" className="w-full rounded-xl bg-purple-500 hover:bg-purple-600">
                 Update Transaction
               </Button>
             </form>

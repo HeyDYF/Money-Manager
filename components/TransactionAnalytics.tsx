@@ -1,121 +1,210 @@
 import { useState, useMemo } from "react"
-import type { Transaction } from "../hooks/useTransactions"
-import { Input } from "@/components/ui/input"
+import type { Transaction } from "@/utils/transaction"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Pie, Bar } from "react-chartjs-2"
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from "chart.js"
+import { Bar } from "react-chartjs-2"
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
+import { motion } from "framer-motion"
+import { ShoppingBag, Utensils, Bus, Film, MoreHorizontal } from "lucide-react"
+import { currencySymbols } from "@/utils/currencies"
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
+const categories = [
+  { name: "Shopping", icon: ShoppingBag, color: "text-pink-500" },
+  { name: "Restaurants", icon: Utensils, color: "text-orange-500" },
+  { name: "Transport", icon: Bus, color: "text-blue-500" },
+  { name: "Entertainment", icon: Film, color: "text-purple-500" },
+  { name: "Other", icon: MoreHorizontal, color: "text-gray-500" },
+] as const
 
 interface TransactionAnalyticsProps {
   transactions: Transaction[]
+  currency: string
 }
 
-export default function TransactionAnalytics({ transactions }: TransactionAnalyticsProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [timeRange, setTimeRange] = useState("all")
+export default function TransactionAnalytics({ transactions, currency }: TransactionAnalyticsProps) {
+  const [timeRange, setTimeRange] = useState<"week" | "month" | "year">("week")
 
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter(
-      (t) =>
-        t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-  }, [transactions, searchTerm])
-
-  const getTransactionsInRange = (days: number) => {
+  const getDateRange = () => {
     const now = new Date()
-    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
-    return filteredTransactions.filter((t) => new Date(t.date) >= rangeStart)
-  }
-
-  const transactionsInRange = useMemo(() => {
-    switch (timeRange) {
-      case "day":
-        return getTransactionsInRange(1)
-      case "week":
-        return getTransactionsInRange(7)
-      case "month":
-        return getTransactionsInRange(30)
-      case "year":
-        return getTransactionsInRange(365)
-      default:
-        return filteredTransactions
+    const start = new Date()
+    if (timeRange === "week") {
+      start.setDate(now.getDate() - 7)
+    } else if (timeRange === "month") {
+      start.setMonth(now.getMonth() - 1)
+    } else if (timeRange === "year") {
+      start.setFullYear(now.getFullYear() - 1)
     }
-  }, [filteredTransactions, timeRange, getTransactionsInRange]) // Added getTransactionsInRange to dependencies
-
-  const totalIncome = transactionsInRange.reduce((sum, t) => (t.type === "income" ? sum + t.amount : sum), 0)
-  const totalExpense = transactionsInRange.reduce((sum, t) => (t.type === "expense" ? sum + t.amount : sum), 0)
-
-  const pieChartData = {
-    labels: ["Income", "Expense"],
-    datasets: [
-      {
-        data: [totalIncome, totalExpense],
-        backgroundColor: ["#10B981", "#EF4444"],
-        hoverBackgroundColor: ["#059669", "#DC2626"],
-      },
-    ],
+    return { start, end: now }
   }
 
-  const barChartData = {
-    labels: transactionsInRange.map((t) => new Date(t.date).toLocaleDateString()),
-    datasets: [
-      {
-        label: "Income",
-        data: transactionsInRange.map((t) => (t.type === "income" ? t.amount : 0)),
-        backgroundColor: "#10B981",
-      },
-      {
-        label: "Expense",
-        data: transactionsInRange.map((t) => (t.type === "expense" ? t.amount : 0)),
-        backgroundColor: "#EF4444",
-      },
-    ],
+  const getTransactionsInRange = () => {
+    const { start, end } = getDateRange()
+    return transactions.filter((t) => {
+      const date = new Date(t.date)
+      return date >= start && date <= end && t.type === "expense"
+    })
+  }
+
+  const transactionsInRange = getTransactionsInRange()
+  const totalSpend = transactionsInRange.reduce((sum, t) => sum + t.amount, 0)
+
+  const getCategoryTotal = (category: string) => {
+    return transactionsInRange.filter((t) => t.category === category).reduce((sum, t) => sum + t.amount, 0)
+  }
+
+  const getChartData = () => {
+    if (timeRange === "week") {
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      const dailyTotals = new Array(7).fill(0)
+
+      transactionsInRange.forEach((t) => {
+        const date = new Date(t.date)
+        const dayIndex = date.getDay()
+        dailyTotals[dayIndex] += t.amount
+      })
+
+      return {
+        labels: days,
+        datasets: [
+          {
+            data: dailyTotals,
+            backgroundColor: "#2563EB",
+            borderRadius: 8,
+          },
+        ],
+      }
+    } else if (timeRange === "month") {
+      const monthlyTotals = new Array(30).fill(0)
+
+      transactionsInRange.forEach((t) => {
+        const date = new Date(t.date)
+        const dayIndex = date.getDate() - 1
+        monthlyTotals[dayIndex] += t.amount
+      })
+
+      return {
+        labels: Array.from({ length: 30 }, (_, i) => (i + 1).toString()),
+        datasets: [
+          {
+            data: monthlyTotals,
+            backgroundColor: "#2563EB",
+            borderRadius: 8,
+          },
+        ],
+      }
+    } else {
+      const monthlyTotals = new Array(12).fill(0)
+
+      transactionsInRange.forEach((t) => {
+        const date = new Date(t.date)
+        const monthIndex = date.getMonth()
+        monthlyTotals[monthIndex] += t.amount
+      })
+
+      return {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [
+          {
+            data: monthlyTotals,
+            backgroundColor: "#2563EB",
+            borderRadius: 8,
+          },
+        ],
+      }
+    }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex space-x-4">
-        <Input
-          placeholder="Search transactions"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-grow"
-        />
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Time range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All time</SelectItem>
-            <SelectItem value="day">Today</SelectItem>
-            <SelectItem value="week">This week</SelectItem>
-            <SelectItem value="month">This month</SelectItem>
-            <SelectItem value="year">This year</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Income vs Expense</h3>
-          <Pie data={pieChartData} />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Transaction History</h3>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-base font-normal">
+            {new Date().toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </CardTitle>
+          <Select value={timeRange} onValueChange={(value: "week" | "month" | "year") => setTimeRange(value)}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="week">Week</SelectItem>
+              <SelectItem value="month">Month</SelectItem>
+              <SelectItem value="year">Year</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold mb-1">
+            {currencySymbols[currency] || currency} {totalSpend.toFixed(2)}
+          </div>
+          <div className="text-sm text-muted-foreground mb-4">Total spend</div>
           <Bar
-            data={barChartData}
+            data={getChartData()}
             options={{
               responsive: true,
+              plugins: {
+                legend: { display: false },
+              },
               scales: {
-                x: { stacked: true },
-                y: { stacked: true },
+                x: { grid: { display: false } },
+                y: {
+                  grid: { color: "rgba(0,0,0,0.1)" },
+                  ticks: { callback: (value) => `${currencySymbols[currency] || currency}${value}` },
+                },
               },
             }}
           />
-        </div>
+        </CardContent>
+      </Card>
+      <div className="lg:col-span-4 space-y-4 mt-4 lg:mt-0 shadow-xl pt-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-normal">Categories</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {categories.map((category) => {
+              const total = getCategoryTotal(category.name)
+              const percentage = totalSpend > 0 ? Math.round((total / totalSpend) * 100) : 0
+              const transactionCount = transactionsInRange.filter((t) => t.category === category.name).length
+
+              return (
+                <motion.div
+                  key={category.name}
+                  className="flex items-center justify-between"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-full bg-gray-100 ${category.color}`}>
+                      <category.icon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{category.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {transactionCount} transactions
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">
+                      {currencySymbols[currency] || currency} {total.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{percentage}%</p>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </motion.div>
   )
 }

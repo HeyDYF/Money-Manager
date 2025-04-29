@@ -17,7 +17,6 @@ export function MobileHeader({ onSearch }: MobileHeaderProps) {
   const [userName, setUserName] = useState("User")
 
   useEffect(() => {
-    // 只在客户端执行
     const name = localStorage.getItem("userName")
     if (name) {
       setUserName(name)
@@ -31,10 +30,7 @@ export function MobileHeader({ onSearch }: MobileHeaderProps) {
   }
 
   const handleLogout = () => {
-    // Clear all local storage data
-    localStorage.clear()
-    
-    // Force a full page reload to reset all state
+    localStorage.clear()    
     window.location.href = "/"
   }
 

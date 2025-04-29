@@ -1,16 +1,15 @@
 "use client"
 
-import { useState} from "react"
-import { useTransactions, type Transaction } from "../../hooks/useTransactions"
-import BalanceDisplay from "../../components/BalanceDisplay"
-import { MobileHeader } from "../../components/MobileHeader"
-import { BottomNav } from "../../components/BottomNav"
-import TransactionList from "../../components/TransactionList"
-import AddTransactionDialog from "../../components/AddTransactionDialog"
-import { useToast } from "../../components/ui/use-toast"
+import { useState } from "react"
+import { useTransactions, type Transaction } from "@/hooks/useTransactions"
+import BalanceDisplay from "@/components/BalanceDisplay"
+import { MobileHeader } from "@/components/MobileHeader"
+import { BottomNav } from "@/components/BottomNav"
+import TransactionList from "@/components/TransactionList"
+import AddTransactionDialog from "@/components/AddTransactionDialog"
 import { motion, AnimatePresence } from "framer-motion"
-import { Card, CardContent } from "../../components/ui/card"
-import { Button } from "../../components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default function HomePage() {
   const {
@@ -22,7 +21,8 @@ export default function HomePage() {
     deleteTransaction,
     setInitialBalance,
   } = useTransactions()
-  const { toast } = useToast()
+  // const { toast } = useToast()
+
   const [isAddTransactionOpen, setIsAddTransactionOpen] = useState(false)
   const [recentChange, setRecentChange] = useState<{ amount: number; type: "increase" | "decrease" } | undefined>()
   const [searchTerm, setSearchTerm] = useState("")
@@ -90,12 +90,7 @@ export default function HomePage() {
                       stroke="currentColor"
                       className="w-6 h-6 text-primary"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                   </div>
                   <p className="text-muted-foreground">
@@ -113,7 +108,6 @@ export default function HomePage() {
                 transactions={sortedTransactions}
                 onUpdateTransaction={updateTransaction}
                 onDeleteTransaction={deleteTransaction}
-                categories={[]}
                 currency={currency}
               />
             </motion.div>
@@ -130,4 +124,4 @@ export default function HomePage() {
       />
     </main>
   )
-} 
+}

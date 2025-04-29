@@ -1,9 +1,9 @@
 # Money Manager
-
+### 【CS601 Term Project】 Author: Yifan Ding
 A modern, elegant personal finance management application built with Next.js 14, TypeScript, and Tailwind CSS.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-14.2.16-black)
+![Next.js](https://img.shields.io/badge/Next.js-14.2.4-black)
 ![React](https://img.shields.io/badge/React-18-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 
@@ -11,7 +11,6 @@ A modern, elegant personal finance management application built with Next.js 14,
 
 - 💰 Track income and expenses
 - 📊 Visual analytics and reporting
-- 💱 Real-time currency exchange rates
 - 🌓 Dark/Light mode support
 - 📱 Responsive design (Mobile-first)
 - 🔄 Real-time updates
@@ -29,7 +28,7 @@ A modern, elegant personal finance management application built with Next.js 14,
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/money-manager.git
+git clone https://github.com/HeyDYF/Money-Manager.git
 cd money-manager
 ```
 
@@ -40,34 +39,39 @@ npm install
 yarn install
 ```
 
-3. Create a `.env` file in the root directory and add necessary environment variables:
-```env
-NEXT_PUBLIC_EXCHANGE_API_KEY=your_exchange_rate_api_key
-```
-
-4. Run the development server:
+3. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🏗️ Project Structure
 
 ```
 money-manager/
 ├── app/                    # Next.js 14 app directory
-│   ├── analytics/         # Analytics page
-│   ├── exchange/          # Currency exchange page
-│   ├── home/             # Home page
+│   ├── analytics/         # Analytics page with charts and statistics
+│   ├── home/             # Main dashboard with transaction list
+│   ├── onboarding/       # Initial setup page
+│   ├── globals.css       # Global styles
 │   └── layout.tsx        # Root layout
 ├── components/            # Reusable components
+│   ├── ui/              # UI components (shadcn/ui)
+│   ├── AddTransactionDialog.tsx
+│   ├── BalanceDisplay.tsx
+│   ├── BottomNav.tsx
+│   ├── MobileHeader.tsx
+│   ├── TransactionList.tsx
+│   └── TransactionAnalytics.tsx
 ├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions and helpers
-├── public/               # Static assets
-└── styles/              # Global styles
+│   └── useTransactions.ts
+├── utils/               # Utility functions
+│   ├── currencies.ts
+│   └── transaction.ts
+└── public/             # Static assets
 ```
 
 ## 🧰 Tech Stack
@@ -76,35 +80,26 @@ money-manager/
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **UI Components:** 
-  - Radix UI
   - Shadcn UI
   - Framer Motion
-- **Charts:** 
-  - Chart.js
-  - Recharts
+- **Charts:** Chart.js
+- **State Management:** React Hooks
 - **Form Handling:** React Hook Form
 - **Validation:** Zod
-- **State Management:** React Hooks
 
 ## 📱 Key Components
 
 ### Transaction Management
 - Add, edit, and delete transactions
-- Categorize transactions
+- Categorize transactions (Shopping, Restaurants, Transport, Entertainment, Other)
 - Filter and search functionality
 - Real-time balance updates
 
 ### Analytics Dashboard
-- Income vs. Expense visualization
-- Spending trends
+- Spending trends by week/month/year
 - Category-wise breakdown
-- Custom date range analysis
-
-### Currency Exchange
-- Real-time exchange rates
-- Support for multiple currencies
-- Historical rate trends
-- Currency conversion calculator
+- Visual charts and statistics
+- Transaction history
 
 ## 🔧 Configuration
 
@@ -135,14 +130,6 @@ npm start         # Start production server
 npm run lint      # Run ESLint
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -151,10 +138,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI](https://www.radix-ui.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
 - [Framer Motion](https://www.framer.com/motion/)
-- [ExchangeRate-API](https://www.exchangerate-api.com/)
+- [Chart.js](https://www.chartjs.org/)
 
 ## 📞 Support
 
-For support, email support@example.com or join our Slack channel.
+For support, email 387940240@qq.com

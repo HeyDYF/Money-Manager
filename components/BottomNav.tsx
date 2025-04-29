@@ -34,9 +34,8 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 ${
-                isActive ? "text-primary" : "text-gray-500 dark:text-gray-400"
-              }`}
+              className={`flex flex-col items-center justify-center flex-1 ${isActive ? "text-primary" : "text-gray-500 dark:text-gray-400"
+                }`}
             >
               <item.icon className="w-6 h-6" />
               <span className="text-xs mt-1">{item.label}</span>

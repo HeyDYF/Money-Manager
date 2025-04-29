@@ -149,9 +149,12 @@ export default function TransactionList({
                 className="rounded-xl"
               />
               <Input
-                type="number"
-                value={editingTransaction.amount}
-                onChange={(e) => setEditingTransaction({ ...editingTransaction, amount: Number(e.target.value) })}
+                type="text"
+                value={editingTransaction.amount === 0 ? "" : editingTransaction.amount.toString()}
+                onChange={(e) => {
+                  const value = e.target.value === "" ? 0 : Number(e.target.value)
+                  setEditingTransaction({ ...editingTransaction, amount: value })
+                }}
                 placeholder="Amount"
                 className="rounded-xl"
               />

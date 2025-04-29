@@ -17,17 +17,26 @@ export interface Transaction {
 export function useTransactions() {
   const [balance, setBalance] = useState(() => {
     if (isClient) {
+      const initialBalance = localStorage.getItem("initialBalance")
+      if (initialBalance) {
+        const amount = Number(initialBalance)
+        localStorage.setItem("balance", amount.toString())
+        localStorage.removeItem("initialBalance")
+        return amount
+      }
       const storedBalance = localStorage.getItem("balance")
       return storedBalance ? Number(storedBalance) : 0
     }
     return 0
   })
+
   const [currency, setCurrency] = useState(() => {
     if (isClient) {
       return localStorage.getItem("currency") || "CNY"
     }
     return "CNY"
   })
+
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     if (isClient) {
       const storedTransactions = localStorage.getItem("transactions")

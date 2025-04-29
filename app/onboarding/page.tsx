@@ -27,12 +27,12 @@ export default function OnboardingPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (name && initialBalance && selectedCurrency) {
-      localStorage.setItem("onboardingCompleted", "true")
-      localStorage.setItem("userName", name)
-      localStorage.setItem("initialBalance", initialBalance.toString())
-      localStorage.setItem("currency", selectedCurrency)
-      setIsOnboardingComplete(true)
-      router.push("/home")
+    localStorage.setItem("onboardingCompleted", "true")
+    localStorage.setItem("userName", name)
+    localStorage.setItem("initialBalance", initialBalance.toString())
+    localStorage.setItem("currency", selectedCurrency)
+    setIsOnboardingComplete(true)
+    router.push("/home")
     }
   }
 

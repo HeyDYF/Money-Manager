@@ -85,7 +85,6 @@ money-manager/
 - **Charts:** Chart.js
 - **State Management:** React Hooks
 - **Form Handling:** React Hook Form
-- **Validation:** Zod
 
 ## 📱 Key Components
 
@@ -141,7 +140,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Shadcn UI](https://ui.shadcn.com/)
 - [Framer Motion](https://www.framer.com/motion/)
 - [Chart.js](https://www.chartjs.org/)
-
-## 📞 Support
-
-For support, email 387940240@qq.com

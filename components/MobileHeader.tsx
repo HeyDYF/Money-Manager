@@ -30,7 +30,7 @@ export function MobileHeader({ onSearch }: MobileHeaderProps) {
   }
 
   const handleLogout = () => {
-    localStorage.clear()    
+    localStorage.clear()
     window.location.href = "/"
   }
 

@@ -112,9 +112,7 @@ export function ExchangeCard() {
       </CardHeader>
 
       <CardContent className="p-6 space-y-6">
-        {/* 兑换区域 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* From */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From</label>
             <div className="flex space-x-2">
@@ -142,7 +140,6 @@ export function ExchangeCard() {
             </div>
           </div>
 
-          {/* To */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To</label>
             <div className="flex space-x-2">
@@ -168,7 +165,6 @@ export function ExchangeCard() {
           </div>
         </div>
 
-        {/* 交换按钮 */}
         <Button
           variant="outline"
           className="w-full rounded-xl border-gray-200 dark:border-gray-700"
@@ -178,7 +174,6 @@ export function ExchangeCard() {
           Swap Currencies
         </Button>
 
-        {/* 汇率详情展示 */}
         <AnimatePresence>
           {exchangeData && (
             <motion.div
